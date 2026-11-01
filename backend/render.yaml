@@ -6,16 +6,12 @@ services:
     buildCommand: pip install --only-binary=:all: -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1
     healthCheckPath: /health
-    # Persistent disk so uploads, SQLite and ChromaDB survive restarts. Requires a paid Render plan.
-    disk:
-      name: datasleuth-data
-      mountPath: /var/data
-      sizeGB: 5
+    plan: free
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.9
       - key: DATA_DIR
-        value: /var/data
+        value: ./data
       - key: TRUST_PROXY_HEADERS
         value: "true"
       - key: CORS_ORIGINS

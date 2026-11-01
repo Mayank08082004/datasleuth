@@ -178,9 +178,11 @@ DataSleuth is designed for simple, modern deployment: **FastAPI backend on Rende
 
 DataSleuth uses ChromaDB's embedded `PersistentClient`, storing vector indices and SQLite metadata under `$DATA_DIR/chroma`.
 
-1. **Persistent Storage:**
-   - **Render Paid Plan (Recommended):** Attach a **Persistent Disk** mounted at `/var/data` (set `DATA_DIR=/var/data`). This ensures uploaded files, SQLite metadata (`datasleuth.db`), and ChromaDB vector indices persist across restarts, updates, and redeploys.
-   - **Render Free Tier (Ephemeral):** On free containers without a disk, DataSleuth functions normally using local `./data`, but data will be wiped whenever Render sleeps or restarts the container.
+1. **Deploying on the Free Tier (No Paid Disks Needed):**
+   - You **do not need a persistent disk**. Leave `DATA_DIR=./data` (the default).
+   - ChromaDB, SQLite, and file uploads work inside the local `./data` folder of the container.
+   - When Render's free tier spins down after 15 minutes of inactivity or restarts, the container restarts fresh. Users simply upload their CSV when testing or demoing.
+   - **Do NOT add any disk in the "Disks" section** of the Render dashboard. Leaving "Disks" empty allows you to select Render's **Free Instance Type ($0/month)**.
 2. **Worker Concurrency:**
    - Always run the backend with **`--workers 1`** (as configured in `render.yaml` and `Procfile`). Embedded ChromaDB uses local SQLite and HNSW file structures; a single worker avoids cross-process file-lock contention.
 3. **Model Change Safety:**
@@ -216,10 +218,10 @@ DataSleuth uses ChromaDB's embedded `PersistentClient`, storing vector indices a
    - `EMBEDDING_API_KEY` = `<your Google Gemini API key>`
    - `EMBEDDING_BASE_URL` = `https://generativelanguage.googleapis.com/v1beta`
    - `EMBEDDING_MODEL` = `gemini-embedding-2`
-   - `DATA_DIR` = `/var/data` (if using disk) or `./data`
+   - `DATA_DIR` = `./data`
    - `TRUST_PROXY_HEADERS` = `true`
    - `CORS_ORIGINS` = `https://<your-app>.vercel.app`
-5. (Optional but recommended) Add a **Disk**: Mount path `/var/data`, size `5GB`.
+5. **Leave the "Disks" section completely empty** (do not add any disk). This keeps your deployment on Render's 100% Free plan.
 6. Deploy the service and copy your public backend URL (e.g., `https://datasleuth-api.onrender.com`).
 
 #### 3. Deploy Frontend on Vercel
