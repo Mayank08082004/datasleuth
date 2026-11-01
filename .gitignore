@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+
+# Environment & secrets
+.env
+*.env
+backend/.env
+
+# Local data & databases
+data/
+backend/data/
+*.db
+*.sqlite3
+
+# Build outputs & caches
+dist/
+.pytest_cache/
+.DS_Store
+screenshots/
+frontend/e2e/screenshots/
+
